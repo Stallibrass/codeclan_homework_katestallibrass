@@ -1,0 +1,84 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+library(CodeClanData)
+```
+
+1. Loading data and checking
+
+```{r}
+dim(drinks_content)
+```
+
+```{r}
+names(drinks_content)
+```
+
+```{r}
+head(drinks_content)
+```
+
+```{r}
+glimpse(drinks_content)
+```
+
+2. Selecting columns to keep
+
+```{r}
+calorie_data <- select(drinks_content, Beverage_category, Beverage, Beverage_prep, Calories)
+dim(calorie_data)
+```
+
+```{r}
+drop_na(calorie_data, Beverage_category, Beverage, Beverage_prep, Calories)
+```
+
+3. Create a new column called calorie_diff
+
+```{r}
+mutate(calorie_data, 
+       Calorie_diff = Calories - 135)
+```
+
+4. Summaries the mean number of calories in each beverage_category. Which 3 categories of drinks have the most calories? Which 3 drinks have the least? 
+
+```{r}
+grouped_beverage <- group_by(calorie_data, Beverage_category)
+grouped_beverage
+```
+```{r}
+arrange(summarise(grouped_beverage, mean_calories = mean(Calories)), desc(mean_calories))
+```
+Top 3 = "Smoothies", "Frappuccino Blended Coffee", "Signature Espresso Drinks"
+Bottom 3 = "Classic Espresso Drinks", "Shaken Iced Beverages", "Coffee"
+
+5. What is the average number of calories in each Beverage_prep type?
+
+```{r}
+grouped_by_prep <- group_by(calorie_data, Beverage_prep)
+grouped_by_prep_mean <- summarise(grouped_by_prep, mean_calorie_prep = mean(Calories))
+grouped_by_prep_mean
+```
+
+6. Which beverage_prep type contains more than the average calories of all drinks?
+
+```{r}
+average_calorie <- pull(summarise(calorie_data,
+                                  mean(Calories)))
+
+filter(grouped_by_prep_mean, mean_calorie_prep > average_calorie)
+```
+
+7. Which is the best type of coffee drink to get if you're worried about consuming too many calories?
+
+```{r}
+arrange(calorie_data, Calories)
+```
+Short Brewed Coffee
