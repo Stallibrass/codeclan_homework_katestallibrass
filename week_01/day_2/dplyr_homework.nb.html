@@ -1877,6 +1877,17 @@ $ `Caffeine (mg)`           &lt;chr&gt; &quot;175&quot;, &quot;260&quot;, &quot;
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Solution</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJpbmtzX2NvbnRlbnQgJT4lXG4gIHNlbGVjdChCZXZlcmFnZV9jYXRlZ29yeSwgQmV2ZXJhZ2UsIEJldmVyYWdlX3ByZXAsIENhbG9yaWVzKSAlPiVcbiAgZmlsdGVyKGlzLm5hKENhbG9yaWVzKSkgJT4lXG4gIHN1bW1hcmlzZShjb3VudF9vZl9taXNzaW5nX2NhbG9yaWVzID0gbigpKVxuYGBgIn0= -->
+<pre class="r"><code>drinks_content %&gt;%
+  select(Beverage_category, Beverage, Beverage_prep, Calories) %&gt;%
+  filter(is.na(Calories)) %&gt;%
+  summarise(count_of_missing_calories = n())</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <ol start="3" style="list-style-type: decimal">
 <li>Create a new column called calorie_diff</li>
 </ol>
@@ -1948,6 +1959,15 @@ all drinks?</li>
 </div>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXZlcmFnZV9jYWxvcmllXG5cbmBgYCJ9 -->
+<pre class="r"><code>average_calorie
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE5My44NzE5XG4ifQ== -->
+<pre><code>[1] 193.8719</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ol start="7" style="list-style-type: decimal">
 <li>Which is the best type of coffee drink to get if you’re worried
@@ -1965,9 +1985,46 @@ about consuming too many calories?</li>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Short Brewed Coffee</p>
+<p>Solution</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJpbmtfY2Fsb3JpZXMgJT4lXG4gIGZpbHRlcihCZXZlcmFnZV9jYXRlZ29yeSAhPSBcIlRhem/CriBUZWEgRHJpbmtzXCIpICU+JVxuICBncm91cF9ieShCZXZlcmFnZV9jYXRlZ29yeSwgQmV2ZXJhZ2UsIEJldmVyYWdlX3ByZXApICU+JVxuICBzdW1tYXJpc2UobWluX2NhbG9yaWVzID0gbWluKENhbG9yaWVzKSkgJT4lXG4gIGFycmFuZ2UobWluX2NhbG9yaWVzKSAlPiVcbiAgaGVhZCgxKVxuYGBgIn0= -->
+<pre class="r"><code>drink_calories %&gt;%
+  filter(Beverage_category != &quot;Tazo® Tea Drinks&quot;) %&gt;%
+  group_by(Beverage_category, Beverage, Beverage_prep) %&gt;%
+  summarise(min_calories = min(Calories)) %&gt;%
+  arrange(min_calories) %&gt;%
+  head(1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2Fsb3JpZV9kYXRhICU+JSBcbiAgZmlsdGVyKEJldmVyYWdlX2NhdGVnb3J5ICE9IFwiVGF6b8KuIFRlYSBEcmlua3NcIikgJT4lXG4gIGdyb3VwX2J5KEJldmVyYWdlX2NhdGVnb3J5LCBCZXZlcmFnZSwgQmV2ZXJhZ2VfcHJlcCkgJT4lXG4gIHN1bW1hcmlzZShtaW5fY2Fsb3JpZXMgPSBtaW4oQ2Fsb3JpZXMpKSAlPiVcbiAgYXJyYW5nZShtaW5fY2Fsb3JpZXMpICU+JVxuICBoZWFkKDEpXG5cbmBgYCJ9 -->
+<pre class="r"><code>calorie_data %&gt;% 
+  filter(Beverage_category != &quot;Tazo® Tea Drinks&quot;) %&gt;%
+  group_by(Beverage_category, Beverage, Beverage_prep) %&gt;%
+  summarise(min_calories = min(Calories)) %&gt;%
+  arrange(min_calories) %&gt;%
+  head(1)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ0JldmVyYWdlX2NhdGVnb3J5JywgJ0JldmVyYWdlJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGVcbmAuZ3JvdXBzYCBhcmd1bWVudC5cbiJ9 -->
+<pre><code>`summarise()` has grouped output by &#39;Beverage_category&#39;, &#39;Beverage&#39;. You can override using the
+`.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImdyb3VwZWRfZGYiLCJ0YmxfZGYiLCJ0YmwiLCJkYXRhLmZyYW1lIl0sIm5yb3ciOjEsIm5jb2wiOjQsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiMSDDlyA0Il0sIkdyb3VwcyI6WyJCZXZlcmFnZV9jYXRlZ29yeSwgQmV2ZXJhZ2UgWzFdIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQTIxUlMwN0RNQkNkaEJqYWlKUWlMc0FGa2cwc1dLS0NPQUFmcVR0a2tra2FrZHFSNDFMWWNmS1dzV09qWWpHUzdmRjc4L0ViUDk0dnI5SmxDZ0JIa01TME0zS0J2VHcvNURkZ0VZZ2dnYWs1UDRtK0lDZWhOVDhnanU5a1hTTUdhTFpRdU1YcThsK1NQYTJrMHVUTURIZzdBV2QvR3JLeTQ4TVFaS1lWMTd5b0ZWOWpFRDVWY2xzSXdrMUtSaXYrcG0xUEZ0YjFRWE1yWmdUUEYvaUJpamY0V25LTmpWUmZqcGg0NGxlWEQrd1Y5ZzQ4WGJlQ0VqdXBXbHQ1RjdROGtiMXVwU0FxTmhOa2dhaElCY0RaUnBoSFZubTUyb2ozL05vSXQvUm9tZk9qQXo4Wld5WjdWNHI1MzBIUnRNSy9ublg4RFR0M21kSEU3Q3lLWHJWQyt3a1RPaFJhYXU3ajBsSjJIckhhWVBjRFhZVVhDVGdDQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Beverage_category"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Beverage"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Beverage_prep"],"name":[3],"type":["chr"],"align":["left"]},{"label":["min_calories"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Coffee","2":"Brewed Coffee","3":"Short","4":"3"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpgYGAKCmBgYHtyfQpsaWJyYXJ5KENvZGVDbGFuRGF0YSkKYGBgCgoxLiBMb2FkaW5nIGRhdGEgYW5kIGNoZWNraW5nCgpgYGB7cn0KZGltKGRyaW5rc19jb250ZW50KQpgYGAKCmBgYHtyfQpuYW1lcyhkcmlua3NfY29udGVudCkKYGBgCgpgYGB7cn0KaGVhZChkcmlua3NfY29udGVudCkKYGBgCgpgYGB7cn0KZ2xpbXBzZShkcmlua3NfY29udGVudCkKYGBgCgoyLiBTZWxlY3RpbmcgY29sdW1ucyB0byBrZWVwCgpgYGB7cn0KY2Fsb3JpZV9kYXRhIDwtIHNlbGVjdChkcmlua3NfY29udGVudCwgQmV2ZXJhZ2VfY2F0ZWdvcnksIEJldmVyYWdlLCBCZXZlcmFnZV9wcmVwLCBDYWxvcmllcykKZGltKGNhbG9yaWVfZGF0YSkKYGBgCgpgYGB7cn0KZHJvcF9uYShjYWxvcmllX2RhdGEsIEJldmVyYWdlX2NhdGVnb3J5LCBCZXZlcmFnZSwgQmV2ZXJhZ2VfcHJlcCwgQ2Fsb3JpZXMpCmBgYAoKMy4gQ3JlYXRlIGEgbmV3IGNvbHVtbiBjYWxsZWQgY2Fsb3JpZV9kaWZmCgpgYGB7cn0KbXV0YXRlKGNhbG9yaWVfZGF0YSwgCiAgICAgICBDYWxvcmllX2RpZmYgPSBDYWxvcmllcyAtIDEzNSkKYGBgCgo0LiBTdW1tYXJpZXMgdGhlIG1lYW4gbnVtYmVyIG9mIGNhbG9yaWVzIGluIGVhY2ggYmV2ZXJhZ2VfY2F0ZWdvcnkuIFdoaWNoIDMgY2F0ZWdvcmllcyBvZiBkcmlua3MgaGF2ZSB0aGUgbW9zdCBjYWxvcmllcz8gV2hpY2ggMyBkcmlua3MgaGF2ZSB0aGUgbGVhc3Q/IAoKYGBge3J9Cmdyb3VwZWRfYmV2ZXJhZ2UgPC0gZ3JvdXBfYnkoY2Fsb3JpZV9kYXRhLCBCZXZlcmFnZV9jYXRlZ29yeSkKZ3JvdXBlZF9iZXZlcmFnZQpgYGAKYGBge3J9CmFycmFuZ2Uoc3VtbWFyaXNlKGdyb3VwZWRfYmV2ZXJhZ2UsIG1lYW5fY2Fsb3JpZXMgPSBtZWFuKENhbG9yaWVzKSksIGRlc2MobWVhbl9jYWxvcmllcykpCmBgYApUb3AgMyA9ICJTbW9vdGhpZXMiLCAiRnJhcHB1Y2Npbm8gQmxlbmRlZCBDb2ZmZWUiLCAiU2lnbmF0dXJlIEVzcHJlc3NvIERyaW5rcyIKQm90dG9tIDMgPSAiQ2xhc3NpYyBFc3ByZXNzbyBEcmlua3MiLCAiU2hha2VuIEljZWQgQmV2ZXJhZ2VzIiwgIkNvZmZlZSIKCjUuIFdoYXQgaXMgdGhlIGF2ZXJhZ2UgbnVtYmVyIG9mIGNhbG9yaWVzIGluIGVhY2ggQmV2ZXJhZ2VfcHJlcCB0eXBlPwoKYGBge3J9Cmdyb3VwZWRfYnlfcHJlcCA8LSBncm91cF9ieShjYWxvcmllX2RhdGEsIEJldmVyYWdlX3ByZXApCmdyb3VwZWRfYnlfcHJlcF9tZWFuIDwtIHN1bW1hcmlzZShncm91cGVkX2J5X3ByZXAsIG1lYW5fY2Fsb3JpZV9wcmVwID0gbWVhbihDYWxvcmllcykpCmdyb3VwZWRfYnlfcHJlcF9tZWFuCmBgYAoKNi4gV2hpY2ggYmV2ZXJhZ2VfcHJlcCB0eXBlIGNvbnRhaW5zIG1vcmUgdGhhbiB0aGUgYXZlcmFnZSBjYWxvcmllcyBvZiBhbGwgZHJpbmtzPwoKYGBge3J9CmF2ZXJhZ2VfY2Fsb3JpZSA8LSBwdWxsKHN1bW1hcmlzZShjYWxvcmllX2RhdGEsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBtZWFuKENhbG9yaWVzKSkpCgpmaWx0ZXIoZ3JvdXBlZF9ieV9wcmVwX21lYW4sIG1lYW5fY2Fsb3JpZV9wcmVwID4gYXZlcmFnZV9jYWxvcmllKQpgYGAKCjcuIFdoaWNoIGlzIHRoZSBiZXN0IHR5cGUgb2YgY29mZmVlIGRyaW5rIHRvIGdldCBpZiB5b3UncmUgd29ycmllZCBhYm91dCBjb25zdW1pbmcgdG9vIG1hbnkgY2Fsb3JpZXM/CgpgYGB7cn0KYXJyYW5nZShjYWxvcmllX2RhdGEsIENhbG9yaWVzKQpgYGAKU2hvcnQgQnJld2VkIENvZmZlZQo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpgYGAKCmBgYHtyfQpsaWJyYXJ5KENvZGVDbGFuRGF0YSkKYGBgCgoxLiBMb2FkaW5nIGRhdGEgYW5kIGNoZWNraW5nCgpgYGB7cn0KZGltKGRyaW5rc19jb250ZW50KQpgYGAKCmBgYHtyfQpuYW1lcyhkcmlua3NfY29udGVudCkKYGBgCgpgYGB7cn0KaGVhZChkcmlua3NfY29udGVudCkKYGBgCgpgYGB7cn0KZ2xpbXBzZShkcmlua3NfY29udGVudCkKYGBgCgoyLiBTZWxlY3RpbmcgY29sdW1ucyB0byBrZWVwCgpgYGB7cn0KY2Fsb3JpZV9kYXRhIDwtIHNlbGVjdChkcmlua3NfY29udGVudCwgQmV2ZXJhZ2VfY2F0ZWdvcnksIEJldmVyYWdlLCBCZXZlcmFnZV9wcmVwLCBDYWxvcmllcykKZGltKGNhbG9yaWVfZGF0YSkKYGBgCgpgYGB7cn0KZHJvcF9uYShjYWxvcmllX2RhdGEsIEJldmVyYWdlX2NhdGVnb3J5LCBCZXZlcmFnZSwgQmV2ZXJhZ2VfcHJlcCwgQ2Fsb3JpZXMpCmBgYApTb2x1dGlvbgpgYGB7cn0KZHJpbmtzX2NvbnRlbnQgJT4lCiAgc2VsZWN0KEJldmVyYWdlX2NhdGVnb3J5LCBCZXZlcmFnZSwgQmV2ZXJhZ2VfcHJlcCwgQ2Fsb3JpZXMpICU+JQogIGZpbHRlcihpcy5uYShDYWxvcmllcykpICU+JQogIHN1bW1hcmlzZShjb3VudF9vZl9taXNzaW5nX2NhbG9yaWVzID0gbigpKQpgYGAKCgoKMy4gQ3JlYXRlIGEgbmV3IGNvbHVtbiBjYWxsZWQgY2Fsb3JpZV9kaWZmCgpgYGB7cn0KbXV0YXRlKGNhbG9yaWVfZGF0YSwgCiAgICAgICBDYWxvcmllX2RpZmYgPSBDYWxvcmllcyAtIDEzNSkKYGBgCgo0LiBTdW1tYXJpZXMgdGhlIG1lYW4gbnVtYmVyIG9mIGNhbG9yaWVzIGluIGVhY2ggYmV2ZXJhZ2VfY2F0ZWdvcnkuIFdoaWNoIDMgY2F0ZWdvcmllcyBvZiBkcmlua3MgaGF2ZSB0aGUgbW9zdCBjYWxvcmllcz8gV2hpY2ggMyBkcmlua3MgaGF2ZSB0aGUgbGVhc3Q/IAoKYGBge3J9Cmdyb3VwZWRfYmV2ZXJhZ2UgPC0gZ3JvdXBfYnkoY2Fsb3JpZV9kYXRhLCBCZXZlcmFnZV9jYXRlZ29yeSkKZ3JvdXBlZF9iZXZlcmFnZQpgYGAKYGBge3J9CmFycmFuZ2Uoc3VtbWFyaXNlKGdyb3VwZWRfYmV2ZXJhZ2UsIG1lYW5fY2Fsb3JpZXMgPSBtZWFuKENhbG9yaWVzKSksIGRlc2MobWVhbl9jYWxvcmllcykpCmBgYApUb3AgMyA9ICJTbW9vdGhpZXMiLCAiRnJhcHB1Y2Npbm8gQmxlbmRlZCBDb2ZmZWUiLCAiU2lnbmF0dXJlIEVzcHJlc3NvIERyaW5rcyIKQm90dG9tIDMgPSAiQ2xhc3NpYyBFc3ByZXNzbyBEcmlua3MiLCAiU2hha2VuIEljZWQgQmV2ZXJhZ2VzIiwgIkNvZmZlZSIKCjUuIFdoYXQgaXMgdGhlIGF2ZXJhZ2UgbnVtYmVyIG9mIGNhbG9yaWVzIGluIGVhY2ggQmV2ZXJhZ2VfcHJlcCB0eXBlPwoKYGBge3J9Cmdyb3VwZWRfYnlfcHJlcCA8LSBncm91cF9ieShjYWxvcmllX2RhdGEsIEJldmVyYWdlX3ByZXApCmdyb3VwZWRfYnlfcHJlcF9tZWFuIDwtIHN1bW1hcmlzZShncm91cGVkX2J5X3ByZXAsIG1lYW5fY2Fsb3JpZV9wcmVwID0gbWVhbihDYWxvcmllcykpCmdyb3VwZWRfYnlfcHJlcF9tZWFuCmBgYAoKNi4gV2hpY2ggYmV2ZXJhZ2VfcHJlcCB0eXBlIGNvbnRhaW5zIG1vcmUgdGhhbiB0aGUgYXZlcmFnZSBjYWxvcmllcyBvZiBhbGwgZHJpbmtzPwoKYGBge3J9CmF2ZXJhZ2VfY2Fsb3JpZSA8LSBwdWxsKHN1bW1hcmlzZShjYWxvcmllX2RhdGEsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBtZWFuKENhbG9yaWVzKSkpCgpmaWx0ZXIoZ3JvdXBlZF9ieV9wcmVwX21lYW4sIG1lYW5fY2Fsb3JpZV9wcmVwID4gYXZlcmFnZV9jYWxvcmllKQpgYGAKYGBge3J9CmF2ZXJhZ2VfY2Fsb3JpZQpgYGAKCgo3LiBXaGljaCBpcyB0aGUgYmVzdCB0eXBlIG9mIGNvZmZlZSBkcmluayB0byBnZXQgaWYgeW91J3JlIHdvcnJpZWQgYWJvdXQgY29uc3VtaW5nIHRvbyBtYW55IGNhbG9yaWVzPwoKYGBge3J9CmFycmFuZ2UoY2Fsb3JpZV9kYXRhLCBDYWxvcmllcykKYGBgClNob3J0IEJyZXdlZCBDb2ZmZWUKCgpTb2x1dGlvbgpgYGB7cn0KZHJpbmtfY2Fsb3JpZXMgJT4lCiAgZmlsdGVyKEJldmVyYWdlX2NhdGVnb3J5ICE9ICJUYXpvwq4gVGVhIERyaW5rcyIpICU+JQogIGdyb3VwX2J5KEJldmVyYWdlX2NhdGVnb3J5LCBCZXZlcmFnZSwgQmV2ZXJhZ2VfcHJlcCkgJT4lCiAgc3VtbWFyaXNlKG1pbl9jYWxvcmllcyA9IG1pbihDYWxvcmllcykpICU+JQogIGFycmFuZ2UobWluX2NhbG9yaWVzKSAlPiUKICBoZWFkKDEpCmBgYAoKCmBgYHtyfQpjYWxvcmllX2RhdGEgJT4lIAogIGZpbHRlcihCZXZlcmFnZV9jYXRlZ29yeSAhPSAiVGF6b8KuIFRlYSBEcmlua3MiKSAlPiUKICBncm91cF9ieShCZXZlcmFnZV9jYXRlZ29yeSwgQmV2ZXJhZ2UsIEJldmVyYWdlX3ByZXApICU+JQogIHN1bW1hcmlzZShtaW5fY2Fsb3JpZXMgPSBtaW4oQ2Fsb3JpZXMpKSAlPiUKICBhcnJhbmdlKG1pbl9jYWxvcmllcykgJT4lCiAgaGVhZCgxKQpgYGAKCg==</div>
 
 
 

@@ -39,6 +39,15 @@ dim(calorie_data)
 ```{r}
 drop_na(calorie_data, Beverage_category, Beverage, Beverage_prep, Calories)
 ```
+Solution
+```{r}
+drinks_content %>%
+  select(Beverage_category, Beverage, Beverage_prep, Calories) %>%
+  filter(is.na(Calories)) %>%
+  summarise(count_of_missing_calories = n())
+```
+
+
 
 3. Create a new column called calorie_diff
 
@@ -75,6 +84,10 @@ average_calorie <- pull(summarise(calorie_data,
 
 filter(grouped_by_prep_mean, mean_calorie_prep > average_calorie)
 ```
+```{r}
+average_calorie
+```
+
 
 7. Which is the best type of coffee drink to get if you're worried about consuming too many calories?
 
@@ -82,3 +95,25 @@ filter(grouped_by_prep_mean, mean_calorie_prep > average_calorie)
 arrange(calorie_data, Calories)
 ```
 Short Brewed Coffee
+
+
+Solution
+```{r}
+drink_calories %>%
+  filter(Beverage_category != "Tazo® Tea Drinks") %>%
+  group_by(Beverage_category, Beverage, Beverage_prep) %>%
+  summarise(min_calories = min(Calories)) %>%
+  arrange(min_calories) %>%
+  head(1)
+```
+
+
+```{r}
+calorie_data %>% 
+  filter(Beverage_category != "Tazo® Tea Drinks") %>%
+  group_by(Beverage_category, Beverage, Beverage_prep) %>%
+  summarise(min_calories = min(Calories)) %>%
+  arrange(min_calories) %>%
+  head(1)
+```
+
