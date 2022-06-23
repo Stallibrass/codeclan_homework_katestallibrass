@@ -9,6 +9,7 @@ library(tidyverse)
 
 ```{r}
 movie_data <- read_csv("tmdb_5000_movies.csv")
+
 view(movie_data)
 ```
 
@@ -26,7 +27,7 @@ sum(is.na(movie_data))
 2. 
 
 ```{r}
-movies_selected <- movie_data %>% 
+movies_selected <- movie_data %>%
   select(title, runtime, budget)
 
 movies_selected
@@ -35,30 +36,32 @@ movies_selected
 3.
 
 ```{r}
-movies_selected %>% 
- summarise(na_count_title = sum(is.na(title)),
-           na_count_runtime = sum(is.na(runtime)),
-           na_count_budget = sum(is.na(budget)))
+movies_selected %>%
+  summarise(
+    na_count_title = sum(is.na(title)),
+    na_count_runtime = sum(is.na(runtime)),
+    na_count_budget = sum(is.na(budget))
+  )
 ```
 
 4. 
 
 
 ```{r}
-movies_runtime <- movies_selected %>% 
+movies_runtime <- movies_selected %>%
   mutate(runtime = na_if(runtime, 0))
 
-movies_runtime %>% 
+movies_runtime %>%
   summarise(na_count_runtime = sum(is.na(runtime)))
 ```
 
 5. 
 
 ```{r}
-movies_imputed <- movies_runtime %>% 
+movies_imputed <- movies_runtime %>%
   mutate(runtime = coalesce(runtime, median(runtime, na.rm = TRUE)))
 
-movies_imputed %>% 
+movies_imputed %>%
   filter(is.na(runtime))
 
 #Answer: 
@@ -69,11 +72,11 @@ movies_imputed %>%
 6. 
 
 ```{r}
-movies_imputed %>% 
+movies_imputed %>%
   slice_min(runtime, n = 10)
 ```
 ```{r}
-movies_imputed %>% 
+movies_imputed %>%
   slice_max(runtime, n = 10)
 ```
 
@@ -95,7 +98,8 @@ movies_imputed %>%
     budget < 12e6 ~ "Small budget",
     budget >= 12e6 & budget < 40e6 ~ "Medium budget", 
     budget >= 40e6 ~ "Big budget"
-  ))
+    )
+  )
 
 
 ```
@@ -122,7 +126,7 @@ Take the original dataset with all the variables. Using across and where, summar
 #Answer:
 
 movie_data %>%
-  summarise(across(where(is.numeric), ~sum(is.na(.x))))
+  summarise(across(where(is.numeric), ~ sum(is.na(.x))))
 
 ```
 ```{r}
