@@ -1,0 +1,204 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Week 1 Weekend HMWK 
+
+
+## Load in tidyverse and the data
+```{r}
+library(tidyverse)
+```
+
+```{r}
+books <- read_csv("data/books.csv")
+```
+
+## Explore the data
+
+```{r}
+dim(books)
+```
+
+```{r}
+glimpse(books)
+```
+
+```{r}
+view(books)
+```
+
+## Check for NAs
+
+```{r}
+sum(is.na(books))
+```
+
+## Slack Questions
+
+### 1. What five books have the highest 'average_rating'?
+
+```{r}
+books %>% 
+  select(title, authors, average_rating) %>% 
+  slice_max(average_rating, n = 5)
+
+# Setting wit_ties to FALSE for strict top 5
+books %>% 
+  select(title, authors, average_rating) %>% 
+  slice_max(average_rating, n = 5, with_ties = FALSE)
+```
+
+### 2. Which book has the most 'text_reviews'?
+
+```{r}
+books %>% 
+  select(title, authors, text_reviews_count) %>% 
+  slice_max(text_reviews_count, n = 1)
+```
+
+### 3. Which book has the most ratings?
+
+```{r}
+books %>% 
+  select(title, authors, ratings_count) %>% 
+  slice_max(ratings_count, n = 1)
+```
+
+### 4. Which publisher has the highest 'average_rating'?
+
+```{r}
+books %>% 
+  select(publisher, average_rating) %>% 
+  slice_max(average_rating, n = 1, with_ties = FALSE)
+```
+
+### 5. How many pages is the longest book for each 'language_code'?
+
+```{r}
+books %>% 
+  select(num_pages, language_code) %>% 
+  group_by(language_code) %>% 
+  slice_max(num_pages, n = 1)
+
+# Checking how many distinct language_codes there are
+books %>% 
+  distinct(language_code)
+
+# Setting with_ties to FALSE as there are repeated values
+books %>% 
+  select(num_pages, language_code) %>% 
+  group_by(language_code) %>% 
+  slice_max(num_pages, n = 1, with_ties = FALSE)
+```
+
+### 6. What is the highest rated book for each 'language_code'?
+
+```{r}
+books %>% 
+  select(title, authors, average_rating, language_code) %>% 
+  group_by(language_code) %>% 
+  slice_max(average_rating, n = 1)
+
+# With_ties = FALSE
+books %>% 
+  select(title, authors, average_rating, language_code) %>% 
+  group_by(language_code) %>% 
+  slice_max(average_rating, n = 1, with_ties = FALSE)
+```
+
+
+
+## My Questions
+
+### 1. How many books has each publisher published?
+
+```{r}
+books %>% 
+  distinct(publisher)
+```
+
+
+```{r}
+books %>% 
+  group_by(publisher) %>% 
+  summarise(publisher, no_of_books = n()) %>% 
+  arrange(desc(no_of_books))
+
+# Got a bit lost on how to filter the results so that there isn't a row for each intance of publisher name 
+```
+
+### 2. Create subset of the data for books published by vintage
+
+```{r}
+vintage_books <- books %>% 
+  filter(publisher == "Vintage")
+
+vintage_books
+```
+
+### 3. Which authors has Vintage published? Arrange them alphabetically. 
+
+```{r}
+vintage_books %>% 
+  distinct(authors) %>% 
+  arrange(authors)
+```
+
+### 4. Which languages does Vintage publish in?
+
+```{r}
+vintage_books %>% 
+  group_by(language_code) %>% 
+  summarise(no_of_lang_books = n())
+```
+
+### 5. What is the one 'spa' (Spanish?) book Vintage has published?
+
+```{r}
+vintage_books %>% 
+  filter(language_code == "spa") %>% 
+  select(title, authors)
+```
+
+### 6. What is the average number of pages of books published by Vintage? Save it to a vector called 'avg_num_pages' and round to the nearest whole number.
+
+```{r}
+avg_num_pages <- vintage_books %>%
+  summarise(avg_num_pages = round(mean(num_pages), digits = 0)) %>%
+  pull()
+
+avg_num_pages
+```
+
+### 7. Create a column called "diff_from_avg" that takes num_pages per book away from the "avg_num_pages".
+
+```{r}
+vintage_books %>% 
+  mutate(diff_from_avg = num_pages - avg_num_pages, .after = num_pages)
+
+# New column could have a better name
+```
+
+
+### 8. What is the shortest book published? What is the longest book published?
+
+```{r}
+vintage_books %>% 
+  select(title, authors, num_pages) %>% 
+  slice_min(num_pages)
+```
+
+```{r}
+vintage_books %>% 
+  select(title, authors, num_pages) %>% 
+  slice_max(num_pages)
+```
+
+### 9. Create a new column called 'diff_rating_review' that calculates the difference between the number of ratings and the number of text reviews a book recieved. 
+
+```{r}
+vintage_books %>% 
+  mutate(diff_rating_review = ratings_count - text_reviews_count, .after = text_reviews_count)
+```
+
