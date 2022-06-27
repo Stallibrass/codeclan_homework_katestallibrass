@@ -47,6 +47,11 @@ books %>%
 books %>% 
   select(title, authors, average_rating) %>% 
   slice_max(average_rating, n = 5, with_ties = FALSE)
+
+#Answers filter for books with reviews over 1000
+books %>% 
+  filter(ratings_count > 1000) %>% 
+  slice_max(average_rating, n = 5)
 ```
 
 ### 2. Which book has the most 'text_reviews'?
@@ -71,6 +76,15 @@ books %>%
 books %>% 
   select(publisher, average_rating) %>% 
   slice_max(average_rating, n = 1, with_ties = FALSE)
+
+#Answer
+
+books %>% 
+  filter(ratings_count > 1000) %>% 
+  group_by(publisher) %>% 
+  summarise(mean_rating = mean(average_rating)) %>%
+  arrange(desc(mean_rating)) %>% 
+  head(1)
 ```
 
 ### 5. How many pages is the longest book for each 'language_code'?
@@ -91,6 +105,21 @@ books %>%
   group_by(language_code) %>% 
   slice_max(num_pages, n = 1, with_ties = FALSE)
 ```
+
+As there's lots of eng codes could collapse all into one
+
+```{r}
+eng_codes <- c("en-CA", "en-GB", "en-US", "eng")
+
+books %>% 
+  mutate(language_code = if_else(language_code %in% eng_codes, "eng", language_code)) %>% # recoding
+  group_by(language_code) %>% 
+  slice_max(num_pages) %>% 
+  select(language_code, num_pages) %>% 
+  arrange(desc(num_pages))
+```
+
+
 
 ### 6. What is the highest rated book for each 'language_code'?
 
@@ -126,6 +155,13 @@ books %>%
   arrange(desc(no_of_books))
 
 # Got a bit lost on how to filter the results so that there isn't a row for each intance of publisher name 
+# Didn't need to include publisher in summarise
+
+books %>% 
+  group_by(publisher) %>% 
+  summarise(no_of_books = n()) %>% 
+  arrange(desc(no_of_books))
+
 ```
 
 ### 2. Create subset of the data for books published by vintage
