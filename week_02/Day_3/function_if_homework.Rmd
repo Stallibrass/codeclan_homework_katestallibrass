@@ -1,0 +1,127 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Functions Homework
+
+#### Question 1
+
+Find the weather forecast for the next three days online. Create a list of lists in which each inner list should be labelled with the name of the day of the week. Each inner list should contain named elements telling you the temperature, chance of rain and wind speed.
+
+```{r}
+palermo_weather <- list(
+  "Thursday" = list(temperature = 30, rain_chance = 0, wind_speed = 13),
+  "Friday" = list(temperature = 30, rain_chance = 6, wind_speed = 12),
+  "Saturday" = list(temperature = 31, rain_chance = 0, wind_speed = 13)
+)
+```
+
+#### Question 2
+
+Using the list you’ve just made find:
+
+The chance of rain tomorrow
+```{r}
+palermo_weather$Thursday$rain_chance
+```
+
+The wind speed on the day after tomorrow
+```{r}
+palermo_weather[[2]][[3]]
+```
+
+The temperature tomorrow.
+
+```{r}
+palermo_weather$Thursday$temperature
+```
+
+####Question 3
+
+Find a 14 day forecast online and create a matrix of the forecasts for temperature, where each week is one row and columns correspond to days.
+
+You will want to give a name to the matrix you create.
+
+```{r}
+palermo_temp_14_days <- matrix(c(29, 30, 30, 31, 31, 31, 31, 30, 30, 28, 27, 27, 27, 28), nrow = 2, ncol = 7, byrow = TRUE)
+
+palermo_temp_14_days
+```
+
+#### Question 4
+
+From the matrix you just made select:
+
+The third day of the second week
+```{r}
+palermo_temp_14_days[2, 3]
+```
+
+The whole second week
+```{r}
+palermo_temp_14_days[2, ]
+```
+
+The first, third and fifth days in both weeks.
+```{r}
+palermo_temp_14_days[c(1, 2), c(1, 3,5)]
+```
+
+#### Question 5
+
+Write a function that pre-appends “The answer is:” to any character input, while for numeric input, it either just returns the number for numbers less than 10, or divides the number by 10 for numbers greater than 10. For anything else return “Invalid input”.
+
+
+```{r}
+pre_append <- function(x) {
+  if (is.character(x)) {
+    paste("The answer is:", x)
+  }else {
+    print("Invalid input")
+  }}
+  
+
+pre_append("Kate")
+pre_append(TRUE)
+```
+
+
+```{r}
+greater_or_divide_by_10 <- function(x) { 
+if (x < 10) {
+  print(x)
+} else { if (x > 10) {
+  print(x / 10)
+} } }
+
+greater_or_divide_by_10(13)
+greater_or_divide_by_10(3)
+```
+
+#### Question 6
+
+Write a function which checks if two vectors have the same elements.
+
+If they have the same elements in the same order, return “Exactly the same”
+If they have the same elements but in a different order, return “The same”
+If they don’t have the same elements, return “Different”.
+
+```{r}
+check_for_sameness <- function(v1, v2) {
+  if (all(v1 == v2)) {
+    print("Exactly the same")
+  } else {
+    if (all(sort(v1) == sort(v2))) {
+      print("The same")
+    } else {
+      print("Different")
+    } 
+  } 
+}
+  
+check_for_sameness(c(7, 8, 9), c(7, 8, 9))
+check_for_sameness(c(7, 8, 9), c(9, 8, 7))
+check_for_sameness(c(1, 2, 3), c(7, 8, 9))
+```
+
