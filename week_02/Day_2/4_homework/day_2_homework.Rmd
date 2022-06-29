@@ -102,6 +102,12 @@ names(code_clan_info)
 ```{r}
 code_clan_joined <- code_clan_tweets %>% 
   inner_join(code_clan_info, by = "tweet_id")
+
+#Answer gives a left join
+#Gives same result - because there's a 1-1 relationship between the tibbles.
+
+code_clan_tweets %>% 
+  left_join(code_clan_info, by = "tweet_id")
 ```
 
 #### Question 7.
@@ -109,10 +115,20 @@ code_clan_joined <- code_clan_tweets %>%
 From your new joined data, create a new tibble codeclan_hashtags containing only the tweet_id and convert the hashtags into lowercase for analysis. Keep only those tweets with hashtags.
 
 ```{r}
-codeclan_hashtags <- code_clan_joined %>% 
-  mutate(text = str_to_lower(text)) %>% 
+#codeclan_hashtags <- code_clan_joined %>% 
+  #mutate(text = str_to_lower(text)) %>% 
   #filter(text %in% c("#")) %>% 
   #select(tweet_id) 
+# I was making it more complicated by not realising there was a hashtags column
+
+#Answer
+codeclan_hashtags <- code_clan_joined%>% 
+  select(tweet_id, hashtags) %>%
+  mutate(lowcase_hashtag = str_to_lower(hashtags)) %>%
+  select(-hashtags) %>%
+  drop_na(lowcase_hashtag)
+
+codeclan_hashtags
   
 ```
 
@@ -123,9 +139,11 @@ codeclan_hashtags <- code_clan_joined %>%
 Use str_extract_all() with a regular expression to find out which Twitter users CodeClan have been tweeting.
 
 ```{r}
-codeclan_hashtags %>% 
+code_clan_tweets %>% 
   select(text) %>% 
-  str_extract_all("@+[A-Za-z0-9_]")
+  str_extract_all("@[A-Za-z0-9_]+")
+
+#I had the plus in the wrong position 
 ```
 
 #### Question 9.
@@ -136,5 +154,29 @@ Use the str_detect() function to find all tweets with text that mentions “Edin
 codeclan_hashtags %>% 
   select(text) %>% 
   str_count("edinburgh")
+```
+```{r}
+#Answer Given
+code_clan_tweets %>%
+  mutate(lowcase_tweets = str_to_lower(text)) %>%
+  filter(str_detect(lowcase_tweets, "edinburgh")) %>%
+  summarise(count = n())
+
+```
+
+#### Question 8. 
+
+Some tweets have more than one hashtag, denoted by the c( symbols at the start of the string. Use the str_sub() and str_detect() functions and your codeclan_hashtags tibble from above to find all the cases in which the hashtag string begins with charactersc(.
+
+I didn't attempt this
+
+```{r}
+#Answer given 
+
+hashtags_multiple <- codeclan_hashtags %>% 
+  mutate(first_letters = str_sub(lowcase_hashtag, 1, 2)) %>%
+  filter(str_detect(first_letters, "c\\("))
+
+hashtags_multiple
 ```
 
