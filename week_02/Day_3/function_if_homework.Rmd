@@ -12,7 +12,7 @@ Find the weather forecast for the next three days online. Create a list of lists
 ```{r}
 palermo_weather <- list(
   "Thursday" = list(temperature = 30, rain_chance = 0, wind_speed = 13),
-  "Friday" = list(temperature = 30, rain_chance = 6, wind_speed = 12),
+  "Friday" = list(temperature = 30, rain_chance = 0.06, wind_speed = 12),
   "Saturday" = list(temperature = 31, rain_chance = 0, wind_speed = 13)
 )
 ```
@@ -44,7 +44,9 @@ Find a 14 day forecast online and create a matrix of the forecasts for temperatu
 You will want to give a name to the matrix you create.
 
 ```{r}
-palermo_temp_14_days <- matrix(c(29, 30, 30, 31, 31, 31, 31, 30, 30, 28, 27, 27, 27, 28), nrow = 2, ncol = 7, byrow = TRUE)
+palermo_temp_14_days <- 
+  matrix(c(29, 30, 30, 31, 31, 31, 31, 30, 30, 28, 27, 27, 27, 28), 
+         nrow = 2, ncol = 7, byrow = TRUE) # force to be real numbers
 
 palermo_temp_14_days
 ```
@@ -77,10 +79,10 @@ Write a function that pre-appends “The answer is:” to any character input, w
 pre_append <- function(x) {
   if (is.character(x)) {
     paste("The answer is:", x)
-  }else {
+  } else {
     print("Invalid input")
   }}
-  
+
 
 pre_append("Kate")
 pre_append(TRUE)
@@ -89,15 +91,40 @@ pre_append(TRUE)
 
 ```{r}
 greater_or_divide_by_10 <- function(x) { 
-if (x < 10) {
-  print(x)
-} else { if (x > 10) {
-  print(x / 10)
-} } }
+  if (x < 10) {
+    return(x)
+  } else { if (x > 10) {
+    return(x / 10)
+  } } }  # Doesn't have an output if it's not numeric though
 
 greater_or_divide_by_10(13)
 greater_or_divide_by_10(3)
 ```
+
+```{r}
+#Answer
+
+answer_or_divide <- function(x) {
+  if (is.character(x)) {
+    return(paste("The answer is: ", x))
+  }
+  
+  if (is.numeric(x)) {
+    if (x < 10) {
+      return(x)
+    } else {
+      return(x / 10)
+    }
+  }
+  
+  return("Invalid input")
+}
+
+answer_or_divide("Kate")
+answer_or_divide(29)
+answer_or_divide(2)
+```
+
 
 #### Question 6
 
@@ -109,6 +136,7 @@ If they don’t have the same elements, return “Different”.
 
 ```{r}
 check_for_sameness <- function(v1, v2) {
+  # is_identical <- all(v1 == v2)
   if (all(v1 == v2)) {
     print("Exactly the same")
   } else {
@@ -118,8 +146,8 @@ check_for_sameness <- function(v1, v2) {
       print("Different")
     } 
   } 
-}
-  
+}    # Can create named variables for if statements
+
 check_for_sameness(c(7, 8, 9), c(7, 8, 9))
 check_for_sameness(c(7, 8, 9), c(9, 8, 7))
 check_for_sameness(c(1, 2, 3), c(7, 8, 9))
