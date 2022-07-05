@@ -43,14 +43,17 @@ WHERE local_account_no IS NULL;
 
 -- Q6
 
-SELECT *
+SELECT 
+COUNT(*)
 FROM pay_details 
 WHERE local_account_no IS NULL 
 AND (iban IS NULL);
 
 -- Q7
 
-SELECT *
+SELECT 
+	first_name,
+	last_name
 FROM employees 
 ORDER BY last_name NULLS LAST;
 
@@ -130,19 +133,20 @@ FROM employees;
 SELECT 
 	CONCAT(first_name, ' ', last_name, ' - ', department) AS badge_label
 FROM employees
-WHERE first_name IS NOT NULL
-AND last_name IS NOT NULL 
-AND department IS NOT NULL;
+WHERE 
+	first_name IS NOT NULL AND 
+	last_name IS NOT NULL AND 
+	department IS NOT NULL;
 
 -- Q17
 
 SELECT 
 	CONCAT(first_name, ' ', last_name, ' - ', department, '(joined ', EXTRACT(YEAR FROM start_date), ')') AS badge_label
 FROM employees
-WHERE first_name IS NOT NULL
-AND last_name IS NOT NULL 
-AND department IS NOT NULL
-AND start_date IS NOT NULL;
+WHERE first_name IS NOT NULL AND 
+	last_name IS NOT NULL AND 
+	department IS NOT NULL AND 
+	start_date IS NOT NULL;
 
 -- Q18
 
