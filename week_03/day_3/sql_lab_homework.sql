@@ -155,7 +155,7 @@ ORDER BY COUNT(id) DESC, first_name;
 
 SELECT 
 	department,
-	CAST(COUNT(grade = 1) AS INT)/CAST(COUNT(id) AS REAL) AS proportion_grade_1
+	SUM(CAST(grade = 1 AS INT))/CAST(COUNT(id) AS REAL) AS proportion_grade_1
 FROM employees
 GROUP BY department;
 
