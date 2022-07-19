@@ -1,0 +1,93 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Introduction to ggplot2 Homework
+
+## Question 1
+### Load in the libraries you need, and look at the backpack data. Take note of variable names and dimensions.
+
+```{r}
+library(tidyverse)
+library(CodeClanData)
+
+
+view(backpack)
+glimpse(backpack)
+```
+
+## Question 2
+### What is the distribution of backpack weights that students are carrying? Choose an appropriate graph to show the distribution.
+
+```{r}
+ggplot(backpack, aes(x = backpack_weight)) +
+  geom_histogram(binwidth = 5, 
+                 fill = "steelblue", 
+                 colour = "grey") +
+  labs(title = "Student Backpack Weight Distribution",
+       x = "\nBackpack Weight",
+       y = "\nNumber of Backpacks") +
+  scale_x_continuous(n.breaks = 10)
+  theme_minimal()
+  
+```
+> histogram of the distribution of the weights carried by students
+> more than half of the students carry a bag between 5 and 15 kgs(?)
+
+
+## Question 3
+### Are there differences in backpack weight between sex?
+
+```{r}
+backpack_weight_by_sex <- backpack %>% 
+  group_by(sex) %>% 
+  summarise(avg_backpack_weight = mean(backpack_weight)) 
+
+ggplot(backpack_weight_by_sex, aes(x = sex, 
+                                   y = avg_backpack_weight,
+                                   fill = sex)) +
+  geom_col() +
+  labs(title = "Average Backpack Weight by Sex",
+       x = "Sex",
+       y = "Average Backpack Weight") +
+  theme_light()
+ 
+# I want to change the size of my plot but have no idea how to  
+```
+ > shows the average backpack weight carried by male and female students
+ > males on average carry heavier backpacks, but not by much
+ 
+## Question 4
+### What is the relationship between body weight and backpack weight?
+
+```{r}
+ggplot(backpack) +
+  aes(x = body_weight, y = backpack_weight, colour = "orange") +
+  geom_point(show.legend = FALSE) +
+  geom_smooth(method = lm) +
+  labs(title = "Body weight vs Backpack Weight",
+       x = "Body Weight",
+       y = "Backpack Weight") +
+  theme_light()
+```
+> Shows the relationship between body weight and backpack weight, seems like there is only a minimal (if any) relationship between the two variables
+
+## Question 5
+### Is this relationship different between men and women? Choose an appropriate plot and interpret your findings.
+
+```{r}
+ggplot(backpack) +
+  aes(x = body_weight, y = backpack_weight, colour = sex) +
+  geom_point(show.legend = FALSE) +
+  geom_smooth(method = lm) +
+  labs(title = "Body weight vs Backpack Weight",
+       x = "Body Weight",
+       y = "Backpack Weight") +
+  facet_wrap(~ sex) +
+  theme_light()
+```
+
+> perhaps more of a relationship in females
+
+
