@@ -1,0 +1,89 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Distributions Homework
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+```{r}
+mobile_phones <- read_csv("data/20190928-items.csv") %>% 
+  clean_names()
+```
+## Question 2.
+### Find the brand with the highest numbers of phones in the dataset.
+
+```{r}
+mobile_phones %>% 
+  group_by(brand) %>% 
+  summarise(count = n()) %>% 
+  slice_max(count)
+
+```
+## Question 3.
+### For your top brand, plot the distribution of phone ratings as a probability density, overlaying a fitted normal distribution. Do you think the normal distribution provides a good model of these ratings?
+
+
+```{r}
+samsung <- mobile_phones %>% 
+  filter(brand == "Samsung") %>% 
+  summarise(
+    mean = mean(rating),
+    sd = sd(rating)
+  )
+ 
+
+
+mobile_phones %>% 
+  filter(brand == "Samsung") %>% 
+  ggplot(aes(x = rating)) +
+  geom_histogram(aes(y = ..density..), col = "white", bins = 25) +
+  stat_function(
+    fun = dnorm,
+    args = list(
+      mean = samsung$mean,
+      sd = samsung$sd
+    ),
+    col = "red"
+  )
+```
+> seems somewhat normally distributed
+> the data appears to be left-skewed
+
+## Question 4.
+### We can be more quantitative in comparing the distribution of top brand ratings with a normal distribution. You calculated the mean() and sd() of your distribution in an earlier question. Use these values to calculate the proportions of ratings within one-, two- and three standard deviations of the mean. Compare these proportions with those you expect for a normal distribution.
+
+```{r}
+# 1 sd 
+samsung_ratings <- mobile_phones %>% 
+  filter(brand == "Samsung")
+
+samsung_ratings %>% 
+  filter(rating >= samsung$mean - samsung$sd) %>% 
+  filter(rating <= samsung$mean + samsung$sd) %>% 
+  summarise(prop_1sd = n()/nrow(samsung_ratings))
+```
+```{r}
+# 2 sd
+samsung_ratings %>% 
+  filter(rating >= samsung$mean - (2 * samsung$sd)) %>% 
+  filter(rating <= samsung$mean + (2 * samsung$sd)) %>% 
+  summarise(prop_1sd = n()/nrow(samsung_ratings))
+
+```
+
+```{r}
+# 3 sd
+
+samsung_ratings %>% 
+  filter(rating >= samsung$mean - (3 * samsung$sd)) %>% 
+  filter(rating <= samsung$mean + (3 * samsung$sd)) %>% 
+  summarise(prop_1sd = n()/nrow(samsung_ratings))
+```
+> would expect, if normally distributed, that 99% of the values would be within 3 sd of the mean
+> as there's about 98% of the data values within 3sd then it seems like the data is left skewed and not normally distributed
+
