@@ -61,7 +61,7 @@ p_crew
 
 ```{r}
 # P(survived & crew)
-
+# How did I get the right answer here?
 p_survived_crew <- titanic %>% 
   filter(survived == "yes" & crew == TRUE) %>% 
   summarise(prob = n() / s_titanic)
@@ -69,6 +69,7 @@ p_survived_crew <- titanic %>%
 
 
 ```{r}
+# I'm confused by this extra step that I took
 # P(survived|crew) = P(survived & crew) / P(crew)
 
 p_survived_crew <- p_survived_crew / p_crew
@@ -91,6 +92,11 @@ titanic_table <- titanic_table %>%
 ```{r}
 p_survived_passenger <- 0.226551880380607 / 0.596737652922519
 ```
+
+```{r}
+p_survived_crew2 <- 0.0956048935206162 / 0.403262347077481
+```
+
 
 # 1.2 
 
@@ -140,7 +146,7 @@ p_5_6_7
 > what assumptions do we apply in answering part ii?
 
 That common outcomes aren't counted twice/4 times etc...
-
+Equally likely!
 
 ## Question 6.
 ### If I draw a single card from a 52-card deck, and it is black, what is the probability that its suit is spades? 
@@ -166,5 +172,34 @@ p_spades_and_black <- nrow(s_spades_and_black) / nrow(s_cards)
 
 p_black_spades <- p_spades_and_black * p_spades
 p_black_spades
+```
+I think I got 0.5 to begin with and then doubted myself. 
+
+Answer Given
+
+```{r}
+# this is a conditional probability problem.
+# possible source of confusion here: the conditioning event comes first
+
+# set up the card draw
+card_draw <- cards(jokers = FALSE)
+
+# add in the conditions to show which are black cards, and which arent
+card_draw <- card_draw %>%
+  mutate(black_card = (suit == "Club" | suit == "Spade"))
+
+# now we can filter the rows we want, and figure out the probability of getting a black spade
+spades_and_black_card <- card_draw %>%
+  filter(black_card == TRUE & suit == "Spade")
+prob_spades_and_black <- nrow(spades_and_black_card) / nrow(card_draw)
+
+# we can figure out the probability of getting a black card now
+black_card <- card_draw %>%
+  filter(black_card == TRUE)
+prob_black <- nrow(black_card) / nrow(card_draw)
+
+# now we can figure out the conditional probability
+prob_spades_given_black <- prob_spades_and_black / prob_black
+prob_spades_given_black
 ```
 
