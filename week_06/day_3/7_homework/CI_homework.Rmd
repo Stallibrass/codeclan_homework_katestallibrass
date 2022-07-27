@@ -1,0 +1,199 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Confidence Interval Homework
+
+## Q1
+### Load the data again, clean_names(), and re-familiarise yourself with it
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(infer)
+```
+
+```{r}
+ames <- read_csv("data/ames.csv") %>% 
+  clean_names()
+
+glimpse(ames)
+```
+
+## Q2
+### Investigate the distribution of lot_area. Is the distribution roughly normal? If not, what problems do you find?
+
+```{r}
+ames %>% 
+  ggplot(aes(x = lot_area)) + 
+  geom_histogram(binwidth = 1000)
+```
+
+> roughly normal...maybe... very right skewed
+
+## Q3
+### Compute and visualise a bootstrap sampling distribution for the mean(lot_area) of the sold houses.
+
+```{r}
+bootstrap_sample <- ames %>% 
+  specify(response = lot_area) %>% 
+  generate(reps = 5000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+
+bootstrap_sample %>% 
+  ggplot(aes(x = stat)) +
+  geom_histogram()
+```
+
+
+## Q4
+### Use your bootstrap distribution to calculate a 95% CI for mean(lot_area), and visualise it on the distribution
+
+```{r}
+ci_95 <- bootstrap_sample %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+bootstrap_sample %>% 
+  visualise(bins = 30) +
+  shade_ci(endpoints = ci_95)
+
+```
+
+
+## Q5
+### You would like to know the mean(lot_area) of the sold houses with higher confidence. Calculate the 99%
+ CI for this variable (you can re-use your bootstrap distribution from above). Is it narrower or broader than the 95%
+ CI? Does that make sense?
+ 
+```{r}
+ci_99 <- bootstrap_sample %>% 
+  get_ci(level = 0.99, type = "percentile")
+
+bootstrap_sample %>% 
+  visualise(bins = 30) +
+  shade_ci(endpoints = ci_99)
+```
+ 
+ > they're wider (as I suspected) because they're capturing a higher percentage of the data points
+ 
+ ## Q6
+ ### Calculate the point estimate of the mean(lot_area)
+ 
+```{r}
+mean_bootstrap_sample <- bootstrap_sample %>% 
+  summarise(mean = mean(stat))
+
+mean_bootstrap_sample
+```
+ 
+# 2 Extension
+
+
+## Task 1.
+### Calculate a point estimate and 95% CI for the proportion of houses in the data built before 1920. Does the number of reps you use matter? [Investigate reps from 200 up to 50000, memory of your laptop permitting]. 
+
+```{r}
+before_1920 <- ames %>% 
+  mutate(before_1920 = if_else(
+    year_built < 1920, "Yes", "No"
+  ), .after = year_built) 
+
+p_est <- before_1920 %>% 
+  summarise(prop_before_1920 = sum(before_1920 == "Yes")/n())
+
+```
+200 reps
+```{r}
+bootstrap_prop_200 <- before_1920 %>% 
+  specify(response = before_1920, success = "Yes") %>% 
+  generate(reps = 200, type = "bootstrap") %>% 
+  calculate(stat = "prop")
+
+ci_95_200 <- bootstrap_prop_200 %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+ci_95_200
+
+p_est_200 <- bootstrap_prop_200 %>% 
+  summarise(mean = mean(stat))
+
+p_est_200
+```
+
+500 reps
+```{r}
+bootstrap_prop_500 <- before_1920 %>% 
+  specify(response = before_1920, success = "Yes") %>% 
+  generate(reps = 500, type = "bootstrap") %>% 
+  calculate(stat = "prop")
+
+ci_95_500 <- bootstrap_prop_500 %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+ci_95_500
+
+p_est_500 <- bootstrap_prop_500 %>% 
+  summarise(mean = mean(stat))
+
+p_est_500
+```
+
+1000 reps
+
+```{r}
+bootstrap_prop_1000 <- before_1920 %>% 
+  specify(response = before_1920, success = "Yes") %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "prop")
+
+ci_95_1000 <- bootstrap_prop_1000 %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+ci_95_1000
+
+p_est_1000 <- bootstrap_prop_1000 %>% 
+  summarise(mean = mean(stat))
+
+p_est_1000
+```
+
+2000 reps
+
+```{r}
+bootstrap_prop_2000 <- before_1920 %>% 
+  specify(response = before_1920, success = "Yes") %>% 
+  generate(reps = 2000, type = "bootstrap") %>% 
+  calculate(stat = "prop")
+
+ci_95_2000 <- bootstrap_prop_2000 %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+ci_95_2000
+
+p_est_2000 <- bootstrap_prop_2000 %>% 
+  summarise(mean = mean(stat))
+
+p_est_2000
+```
+
+5000 reps
+
+```{r}
+bootstrap_prop_5000 <- before_1920 %>% 
+  specify(response = before_1920, success = "Yes") %>% 
+  generate(reps = 5000, type = "bootstrap") %>% 
+  calculate(stat = "prop")
+
+ci_95_5000 <- bootstrap_prop_5000 %>% 
+  get_ci(level = 0.95, type = "percentile")
+
+ci_95_5000
+
+p_est_5000 <- bootstrap_prop_5000 %>% 
+  summarise(mean = mean(stat))
+
+p_est_5000
+```
+
+> they're getting more concentrated towards the centre (I think)

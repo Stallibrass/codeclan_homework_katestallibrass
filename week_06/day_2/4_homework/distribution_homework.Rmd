@@ -87,3 +87,4 @@ samsung_ratings %>%
 > would expect, if normally distributed, that 99% of the values would be within 3 sd of the mean
 > as there's about 98% of the data values within 3sd then it seems like the data is left skewed and not normally distributed
 
+> too few values between 1 & 2 sd away from mean
