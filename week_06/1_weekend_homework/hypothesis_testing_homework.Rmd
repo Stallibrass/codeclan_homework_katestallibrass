@@ -18,15 +18,16 @@ library(infer)
 ### Explore the dataset and familiarise yourself with it.
 
 ```{r}
+
+msleep <- msleep
 summary(msleep)
 glimpse(msleep)
 
 msleep %>% 
   summarise(count_na = sum(is.na(sleep_total)))
+
 ```
-```{r}
-view(msleep)
-```
+
 
 
 ## Q2
@@ -43,6 +44,8 @@ sleep_mean <- msleep %>%
 
 sleep_mean
 ```
+
+
 ```{r}
 null_distribution_mean <- msleep %>% 
   specify(response = sleep_total) %>% 
@@ -73,15 +76,41 @@ sig = 0.05
 Two-sample mean hypothesis test (independent)
 
 ```{r}
+msleep <- msleep %>% 
+  drop_na(vore)
+
 null_dist_vore <- msleep %>% 
+  filter(vore %in% c("omni", "herbi")) %>% 
   specify(response = sleep_total, explanatory = vore) %>% 
   hypothesise(null = "independence") %>% 
   generate(reps = 5000, type = "permute") %>% 
   calculate(stat = "diff in means", order = c("omni", "herbi"))
+
+obs_stat_vore <- msleep %>% 
+  filter(vore %in% c("omni", "herbi")) %>% 
+  specify(sleep_total ~ vore) %>% 
+  calculate(stat = "diff in means", order = c("omni", "herbi"))
+
+null_dist_vore %>% 
+  visualise() +
+  shade_p_value(obs_stat = obs_stat_vore, direction = "right")
+
+p_val_vore <- null_dist_vore %>% 
+  get_p_value(obs_stat = obs_stat_vore, direction = "right")
+
+p_val_vore
+
 ```
  > I can't get infer to work 
  > I'm not seeing what the issue is
- > Error keeps being thrown no matter what stat I chose
+ > Error keeps being thrown no matter what stat I chose - it needed a filter
+ 
+```{r}
+msleep %>% 
+  group_by(vore) %>% 
+  summarise(mean_sleep = mean(sleep_total)) 
+```
+ 
  
  
  ## Question 4
@@ -153,7 +182,7 @@ H0:
 - p1 - p2 = 0
 H1:
 - the proportion of customers that clicked through was higher for B than A
-- p2 > p1
+- p2 - p1 > 0
 
 Method:
 - two-sample proportion
@@ -168,6 +197,9 @@ H0:
 H1:
 - the width of the parts is not 145mm
 - $mu$ ≠ 154mm
+
+Method:
+- bootstrap
 
 # 1.3
 
