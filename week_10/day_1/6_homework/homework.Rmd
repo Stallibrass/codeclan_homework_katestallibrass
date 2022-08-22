@@ -1,0 +1,67 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Simple Linear Regression Homework
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(broom)
+```
+
+
+## MVP
+### 1
+
+```{r}
+# Load data
+
+project <- read_csv("data/project_management.csv") %>% 
+  clean_names()
+
+```
+* Plot the data
+
+```{r}
+project %>% 
+  ggplot(aes(x = estimated_length, y = actual_length)) +
+  geom_point()
+```
+
+* Calculate the correlation coefficient
+
+```{r}
+project %>% 
+  summarise(cor(estimated_length, actual_length))
+```
+The correlation coefficent is between 0.8 and 0.99 and therefore can be considered "very strong" on Evans' scale of magnitude.
+
+
+* Perform a simple linear regression using actual_length as the dependent variable, and estimated_length as the independent variable. Save the model object to a variable.
+
+```{r}
+model <- lm(formula = actual_length ~ estimated_length,
+            data = project)
+
+summary(model)
+model %>% glance()
+```
+
+* Interpret the regression coefficient of estimated_length (i.e. slope, gradient) you obtain from the model. How do you interpret the r2 value reported by the model?
+
+> For every 1 unit that estimated_length changes actual_length changes by 1.2235
+> The r^2 value states that 64.7% of the variation in actual_length can be explained by variation in estimated_length. 
+
+* Is the relationship statistically significant? Remember, to assess this you need to check the p-value of the regression coefficient (or slope/gradient). But you should first check the regression diagnostic plots to see if the p-value will be reliable (don’t worry about any outlier points you see in the diagnostic plots, we’ll return to them in the extension).
+
+```{r}
+library(ggfortify)
+
+autoplot(model)
+```
+
+> meh, p-value is statistically significant....but....
+> looks like there's some sort of pattern to the variation in the data and the line on the first plot hovers round 0 then drops at the end
+> outlier really pulling the data
