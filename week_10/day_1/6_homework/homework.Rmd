@@ -36,7 +36,7 @@ project %>%
 project %>% 
   summarise(cor(estimated_length, actual_length))
 ```
-The correlation coefficent is between 0.8 and 0.99 and therefore can be considered "very strong" on Evans' scale of magnitude.
+The correlation coefficent is between 0.8 and 0.99 and therefore can be considered "very strong" positive on Evans' scale of magnitude.
 
 
 * Perform a simple linear regression using actual_length as the dependent variable, and estimated_length as the independent variable. Save the model object to a variable.
