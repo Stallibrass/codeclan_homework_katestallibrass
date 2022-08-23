@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Multiple Regression Homework
+
+## MVP
+
+### 1.
+Load the housing_prices.csv data set and undertake an initial exploration of the data. 
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(GGally)
+library(ggfortify)
+```
+
+```{r}
+house_prices <- read_csv("data/housing_prices.csv")
+```
+```{r}
+glimpse(house_prices)
+```
+```{r}
+summary(house_prices)
+```
+
+Impute NAs
+```{r}
+house_prices <- house_prices %>% 
+  mutate(total_bedrooms = coalesce(total_bedrooms, median(total_bedrooms, na.rm = TRUE))) 
+```
+
+### 2.
+We expect the total_rooms of houses to be strongly correlated with total_bedrooms. Use ggpairs() to investigate correlations between these two variables.
+
+```{r}
+ggpairs(house_prices)
+```
+
+### 3.
+So, we do find significant correlations. Let’s drop total_bedrooms from the dataset, and use only total_rooms going forward
+
+```{r}
+house_prices <- house_prices %>% 
+  select(-total_bedrooms)
+```
+
+### 4.
+We are interested in developing a regression model for the median_house_value of a house in terms of the possible predictor variables in the dataset.
+
+Use ggpairs() to investigate correlations between median_house_value and the predictors (this may take a while to run, don’t worry, make coffee or something).
+
+```{r}
+ggpairs(house_prices)
+```
+
+Perform further ggplot visualisations of any significant correlations you find.
+
+```{r}
+house_prices %>% 
+  ggplot(aes(x = median_income, y = median_house_value)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+house_prices %>% 
+  ggplot(aes(x = total_rooms, y = median_house_value)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+### 5.
+Shortly we may try a regression model to fit the categorical predictor ocean_proximity. Investigate the level of ocean_proximity predictors. How many dummy variables do you expect to get from it?
+
+```{r}
+house_prices %>% 
+  distinct(ocean_proximity)
+```
+
+> Expect to get 4 dummy variables, one less than the number of distinct values.
+
+
+### 6.
+Start with simple linear regression. Regress median_house_value on median_income and check the regression diagnostics.
+
+```{r}
+lm_1 <- lm(median_house_value ~ median_income,
+           house_prices)
+
+autoplot(lm_1)
+
+summary(lm_1)
+```
+
+### 7.
+Add another predictor of your choice. Check your assumptions, diagnostics, and interpret the model.
+
+```{r}
+lm_2 <- lm(median_house_value ~ median_income + households,
+           house_prices)
+
+autoplot(lm_2)
+
+summary(lm_2)
+```
+(rough interpretation, I'm not good with numbers)
+> a 1 unit (I'm not sure what the unit is here) increase in an area's median income results in a $40,000 increase in the median house value, with all other predictors being held constant.
+> an additional household results in a $16 increase in an area's median house value, if all other predictors are held constant.  
+
+
+
+
