@@ -37,7 +37,7 @@ house_prices <- house_prices %>%
 We expect the total_rooms of houses to be strongly correlated with total_bedrooms. Use ggpairs() to investigate correlations between these two variables.
 
 ```{r}
-ggpairs(house_prices)
+ggpairs(house_prices[,c("total_rooms", "total_bedrooms")])
 ```
 
 ### 3.
@@ -106,9 +106,9 @@ autoplot(lm_2)
 summary(lm_2)
 ```
 (rough interpretation, I'm not good with numbers)
-> a 1 unit (I'm not sure what the unit is here) increase in an area's median income results in a $40,000 increase in the median house value, with all other predictors being held constant.
+> a 1 unit (I'm not sure what the unit is here - answer: $35,118) increase in an area's median income results in a $40,000 increase in the median house value, with all other predictors being held constant.
 > an additional household results in a $16 increase in an area's median house value, if all other predictors are held constant.  
-
+> 41% of the variation of the median house value can be explained by the median income and number of households
 
 
 
