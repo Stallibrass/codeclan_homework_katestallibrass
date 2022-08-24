@@ -1,0 +1,146 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Manual Model Development Homework
+
+## MVP
+
+### 1. 
+Tidy up the data ready for regression:
+
+```{r}
+library(tidyverse)
+library(modelr)
+library(GGally)
+library(ggfortify)
+```
+
+```{r}
+house_prices <- read_csv("data/kc_house_data.csv")
+```
+```{r}
+glimpse(house_prices)
+```
+```{r}
+summary(house_prices)
+```
+
+```{r}
+house_prices_clean <- house_prices %>% 
+  mutate(waterfront = as.logical(waterfront),
+         renovated = if_else(yr_renovated == 0, 0, 1), 
+         renovated = as.logical(renovated)) %>% 
+  select(-c(date, id, sqft_living15, sqft_lot15, zipcode, yr_renovated)) 
+  
+#Adding dummy variables
+house_prices_clean <- house_prices_clean %>% 
+  fastDummies::dummy_cols(select_columns = "view", remove_first_dummy = TRUE, remove_selected_columns = TRUE) %>% 
+  fastDummies::dummy_cols(select_columns = "condition", remove_first_dummy = TRUE, remove_selected_columns = TRUE)
+
+#Binning grade variable
+house_prices_clean <- house_prices_clean %>% 
+  mutate(high_grade = if_else(grade >= 11, 1, 0),
+         avg_grade = if_else(grade >=4 & grade <= 10, 1, 0),
+         low_grade = if_else(grade >= 1 & grade <= 3, 1, 0)) %>% 
+  select(-grade)
+```
+
+### 2. 
+Check for aliased variables using the alias() function
+
+```{r}
+alias(lm(price ~ ., house_prices_clean))
+```
+```{r}
+house_prices_clean <- house_prices_clean %>%
+  select(-c(sqft_basement, low_grade))
+  
+
+alias(lm(price ~., house_prices_clean))
+```
+
+### 3. 
+Systematically build a regression model containing up to four main effects (remember, a main effect is just a single predictor with coefficient), testing the regression diagnostics as you go * splitting datasets into numeric and non-numeric columns might help ggpairs() run in manageable time, although you will need to add either a price or resid column to the non-numeric dataframe in order to see its correlations with the non-numeric predictors.
+
+```{r}
+house_prices_numeric <- house_prices_clean %>% 
+  select_if(is.numeric) %>% 
+  select(-c(view_1:avg_grade))
+
+house_prices_dummy <- house_prices_clean %>% 
+  select_if(is.numeric) %>% 
+  select(view_1:avg_grade) 
+
+house_prices_dummy$price <- house_prices_numeric$price
+
+house_prices_non_numeric <- house_prices_clean %>% 
+  select_if(function(x) !is.numeric(x))
+
+house_prices_non_numeric$price <- house_prices_numeric$price
+
+
+```
+
+
+```{r}
+ggpairs(house_prices_numeric)
+```
+
+```{r}
+ggpairs(house_prices_dummy)
+```
+
+
+
+
+```{r}
+ggpairs(house_prices_non_numeric)
+```
+
+```{r}
+mod1_beds <- lm(price ~ bedrooms, 
+                house_prices_clean)
+
+summary(mod1_beds) # eww
+
+autoplot(mod1_beds) # yucky
+```
+
+```{r}
+house_bed_resid <- house_prices_numeric %>% 
+  add_residuals(mod1_beds) %>% 
+  select(-c("price", "bedrooms"))
+
+house_bed_resid %>% 
+  ggpairs()
+```
+
+```{r}
+mod2_b_sqft <-  lm(price ~ bedrooms + sqft_living, 
+                house_prices_clean)
+
+summary(mod2_b_sqft)
+autoplot(mod2_b_sqft)
+```
+
+```{r}
+mod3_reno <- lm(price ~ bedrooms + sqft_living + renovated, 
+                house_prices_clean)
+
+summary(mod3_reno)
+
+autoplot(mod3_reno) # meh
+```
+
+
+```{r}
+mod4_avg <- lm(price ~ bedrooms + sqft_living + renovated + avg_grade,
+               house_prices_clean)
+
+summary(mod4_avg) # alright
+
+autoplot(mod4_avg) # pants
+```
+
