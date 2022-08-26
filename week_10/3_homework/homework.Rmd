@@ -47,11 +47,31 @@ house_prices_clean <- house_prices_clean %>%
   select(-grade)
 ```
 
+
+```{r}
+# Answer given
+
+houses_tidy <- house_prices %>%
+  select(-c("id", "date", "sqft_living15", "sqft_lot15", "zipcode")) %>%
+  mutate(waterfront = as.logical(waterfront)) %>%
+  mutate(renovated = yr_renovated != 0) %>%
+  select(-"yr_renovated") %>%
+  mutate(view = as_factor(view)) %>% 
+  mutate(condition = as_factor(condition)) %>%
+  mutate(grade = as_factor(grade))
+
+
+```
+
+
+
 ### 2. 
 Check for aliased variables using the alias() function
 
 ```{r}
 alias(lm(price ~ ., house_prices_clean))
+
+alias(lm(price ~ ., houses_tidy))
 ```
 ```{r}
 house_prices_clean <- house_prices_clean %>%
@@ -85,11 +105,18 @@ house_prices_non_numeric$price <- house_prices_numeric$price
 
 
 ```{r}
-ggpairs(house_prices_numeric)
+ggpairs(house_prices_numeric, progress = FALSE)
 ```
 
 ```{r}
+ggcorr(house_prices_numeric, label = TRUE)
+```
+
+
+```{r}
 ggpairs(house_prices_dummy)
+
+ggcorr(house_prices_dummy, label = TRUE)
 ```
 
 
@@ -114,7 +141,7 @@ house_bed_resid <- house_prices_numeric %>%
   select(-c("price", "bedrooms"))
 
 house_bed_resid %>% 
-  ggpairs()
+  ggcorr(label = TRUE)
 ```
 
 ```{r}
@@ -132,6 +159,12 @@ mod3_reno <- lm(price ~ bedrooms + sqft_living + renovated,
 summary(mod3_reno)
 
 autoplot(mod3_reno) # meh
+
+house_3_resid <- house_prices_clean %>% 
+  add_residuals(mod3_reno) %>% 
+  select(-c("price", "bedrooms", "renovated", "sqft_living"))
+
+ggcorr(house_3_resid, label = TRUE)
 ```
 
 
@@ -142,5 +175,14 @@ mod4_avg <- lm(price ~ bedrooms + sqft_living + renovated + avg_grade,
 summary(mod4_avg) # alright
 
 autoplot(mod4_avg) # pants
+```
+
+
+
+```{r}
+mod4_bath <- lm(price ~ bedrooms + sqft_living + renovated + bathrooms,
+               house_prices_clean)
+
+summary(mod4_bath)
 ```
 
