@@ -1,0 +1,172 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Weekend Homework - Model Building
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(GGally)
+library(ggfortify)
+library(leaps)
+library(caret)
+```
+
+```{r}
+avocados <- read_csv("data/avocado.csv") %>% clean_names()
+```
+
+```{r}
+glimpse(avocados)
+```
+
+```{r}
+summary(avocados)
+# No NAs
+# average_price looks like it could be right skewed
+```
+
+```{r}
+avocados %>% 
+  ggplot(aes(x = average_price)) +
+  geom_histogram()
+
+# Yeah, a bit right skewed
+``` 
+
+```{r}
+# Does taking the log of average_price help?
+
+avocados %>% 
+  ggplot(aes(x = log(average_price))) +
+  geom_histogram() 
+
+# Meh, not sure it's worth it.
+```
+
+Date seems superfluous with year there already, but might be good to extract the month out of it. Change categorical variables into factors.
+
+```{r}
+avocados_tidy <- avocados %>% 
+  mutate(month = as_factor(month(date)), .after = year) %>% 
+  mutate(year = as_factor(year),
+         type = as_factor(type),
+         region = as_factor(region)) %>% 
+  select(-c(date, x1))
+```
+
+Are there any aliases?
+
+```{r}
+alias(lm(average_price ~., data = avocados_tidy))
+
+# sweet, no aliases
+```
+
+
+
+How do the variables relate to each other?
+Time for my fave ggpairs()!!
+
+```{r}
+ggpairs(avocados_tidy) # region has too many levels
+```
+
+ Let's have a closer look at the region variable
+```{r}
+avocados_tidy %>% 
+  count(region)
+
+# let's drop it - theres an equal ammount of observations for each region 
+```
+```{r}
+avocados_tidy <- avocados_tidy %>% 
+  select(-region)
+```
+
+
+Time for ggpairs(), again...
+
+```{r, message = FALSE}
+avocados_tidy %>% 
+  ggpairs(aes(colour = type, alpha = 0.5))
+
+# looks like there's two populations according to type. x4046 (i.e. small avos.) looks significant too 
+```
+
+Let's create an automated model with leaps
+
+```{r}
+avos_resubsets_ex <- regsubsets(average_price ~., data = avocados_tidy, method = "exhaustive")
+
+plot(avos_resubsets_ex, scale = "adjr2")
+plot(avos_resubsets_ex, scale = "bic") # get the same model (x4046 + x4225 + type + year + month)
+```
+```{r}
+sum_regsubsets_ex <- summary(avos_resubsets_ex)
+
+sum_regsubsets_ex$which
+```
+
+Leaps hasn't tested for all of the levels of year or month. Should check whether they are statistically significant. 
+
+```{r}
+mod_with_month <- lm(average_price ~ x4046 + x4225 + type + year + month,
+                     data = avocados_tidy)
+
+mod_without_month <- lm(average_price ~ x4046 + x4225 + type + year,
+                     data = avocados_tidy)
+
+summary(mod_with_month)
+summary(mod_without_month)
+```
+
+
+```{r}
+anova(mod_without_month, mod_with_month) # Yep looks significant
+```
+
+What about year?
+
+```{r}
+mod_with_year <- lm(average_price ~ x4046 + x4225 + type + year + month,
+                     data = avocados_tidy)
+
+mod_without_year <- lm(average_price ~ x4046 + x4225 + type + month,
+                     data = avocados_tidy)
+
+summary(mod_with_year)
+summary(mod_without_year)
+```
+```{r}
+anova(mod_without_year, mod_with_year) # Yep, that's significant too 
+```
+
+Probably should check the diagnostics
+
+```{r}
+autoplot(mod_with_month) # Looks pretty good to me.
+```
+
+```{r}
+car::avPlots(mod_with_month)
+```
+
+K-fold Validation (comparing model to one with all variables)
+
+```{r}
+cv_10_fold <- trainControl(method = "cv", 
+                             number = 10,
+                             savePredictions = TRUE)
+
+avo_model <- train(average_price ~  x4046 + x4225 + type + year + month, 
+                   data = avocados_tidy,
+                   trControl = cv_10_fold, 
+                   method = "lm")
+
+mean(avo_model$resample$Rsquared)
+```
+

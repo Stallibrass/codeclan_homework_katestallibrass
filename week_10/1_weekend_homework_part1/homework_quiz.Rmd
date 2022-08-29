@@ -1,0 +1,46 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Homework Quiz
+
+## 1. 
+I want to predict how well 6 year-olds are going to do in their final school exams. Using the following variables am I likely under-fitting, fitting well or over-fitting? Postcode, gender, reading level, score in maths test, date of birth, family income.
+
+I would argue well-fitting, intuitively I can see those variablees having an influence on test-scores.
+
+## 2. 
+If I have two models, one with an AIC score of 34,902 and the other with an AIC score of 33,559 which model should I use?
+
+The second one. A lower AIC score is better. 
+
+## 3. 
+I have two models, the first with: r-squared: 0.44, adjusted r-squared: 0.43. The second with: r-squared: 0.47, adjusted r-squared: 0.41. Which one should I use?
+
+I would say the first one. The adjusted r-squared is higher; the model isn't being penalised for too many predictors. 
+
+## 4. 
+I have a model with the following errors: RMSE error on test set: 10.3, RMSE error on training data: 10.4. Do you think this model is over-fitting?
+
+The model looks to be well-fitting. There is minimal difference in the test vs training data.
+
+## 5.
+How does k-fold validation work?
+
+K-fold validation works by subsetting the data into a defined number of equal sets, putting one of those sets aside as test data and training on the remaining sets. It then repeats the process, putting aside a different set for testing each time. 
+
+## 6. 
+What is a validation set? When do you need one?
+
+A validation set is another dataset that is put aside (like test data). It is used as a final measure of accuracy for the model. 
+
+## 7. 
+Describe how backwards selection works.
+
+Backwards selection works by first selecting all the predictors for the model and then iteratively taking predictors out of the model until an appropriate model is found. 
+
+## 8.
+Describe how best subset selection works.
+
+Best subset selection works by searching for the most optimal model for each size of model (i.e. number of possible predictors).

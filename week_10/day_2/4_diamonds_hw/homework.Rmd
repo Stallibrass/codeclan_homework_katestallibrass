@@ -15,7 +15,7 @@ library(tidyverse)
 library(janitor)
 library(GGally)
 library(ggfortify)
-```
+``` 
 
 ```{r}
 house_prices <- read_csv("data/housing_prices.csv")
