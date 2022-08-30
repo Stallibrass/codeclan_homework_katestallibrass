@@ -78,9 +78,9 @@ ggpairs(avocados_tidy) # region has too many levels
  Let's have a closer look at the region variable
 ```{r}
 avocados_tidy %>% 
-  count(region)
+  distinct(region)
 
-# let's drop it - theres an equal ammount of observations for each region 
+# let's drop it 
 ```
 ```{r}
 avocados_tidy <- avocados_tidy %>% 
@@ -120,7 +120,7 @@ mod_with_month <- lm(average_price ~ x4046 + x4225 + type + year + month,
 mod_without_month <- lm(average_price ~ x4046 + x4225 + type + year,
                      data = avocados_tidy)
 
-summary(mod_with_month)
+summary(mod_with_month) # this is the champion
 summary(mod_without_month)
 ```
 
@@ -155,7 +155,7 @@ autoplot(mod_with_month) # Looks pretty good to me.
 car::avPlots(mod_with_month)
 ```
 
-K-fold Validation (comparing model to one with all variables)
+K-fold Validation (comparing model to one with all variables) 
 
 ```{r}
 cv_10_fold <- trainControl(method = "cv", 
@@ -170,3 +170,11 @@ avo_model <- train(average_price ~  x4046 + x4225 + type + year + month,
 mean(avo_model$resample$Rsquared)
 ```
 
+Yeah, looks pretty good!
+
+```{r}
+summary(mod_with_month)
+```
+
+
+> explains almost 50% of the variance

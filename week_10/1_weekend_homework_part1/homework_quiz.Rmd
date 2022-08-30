@@ -9,6 +9,7 @@ output: html_notebook
 I want to predict how well 6 year-olds are going to do in their final school exams. Using the following variables am I likely under-fitting, fitting well or over-fitting? Postcode, gender, reading level, score in maths test, date of birth, family income.
 
 I would argue well-fitting, intuitively I can see those variablees having an influence on test-scores.
+A. Over-fitting (I can see that)
 
 ## 2. 
 If I have two models, one with an AIC score of 34,902 and the other with an AIC score of 33,559 which model should I use?
@@ -28,7 +29,7 @@ The model looks to be well-fitting. There is minimal difference in the test vs t
 ## 5.
 How does k-fold validation work?
 
-K-fold validation works by subsetting the data into a defined number of equal sets, putting one of those sets aside as test data and training on the remaining sets. It then repeats the process, putting aside a different set for testing each time. 
+K-fold validation works by subsetting the data into a defined number of equal sets, putting one of those sets aside as test data and training on the remaining sets. It then repeats the process, putting aside a different set for testing each time. Then you average.
 
 ## 6. 
 What is a validation set? When do you need one?
