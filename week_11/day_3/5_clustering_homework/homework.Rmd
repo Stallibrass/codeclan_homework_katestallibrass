@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# K-Mean Clustering Homework
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(factoextra)
+library(broom)
+```
+
+```{r}
+mall_customers <- read_csv("data/mall_customers.csv") %>% 
+  clean_names() #%>% 
+  # column_to_rownames("customer_id")
+```
+
+```{r}
+skimr::skim(mall_customers)
+```
+
+
+```{r}
+mall_customers %>% 
+  ggplot(aes(age, spending_score_1_100, col = gender)) +
+  geom_point()
+
+mall_customers %>% 
+  ggplot(aes(annual_income_k, spending_score_1_100, col = gender)) +
+  geom_point()
+```
+
+> Looks as if there is some clustering in the data. 
+> Doesn't look like there's a major difference in shopping score by gender.
+
+```{r}
+customers_subset <- mall_customers %>% 
+  select(annual_income_k, spending_score_1_100)
+
+# Scaling so that both variables can be measured 
+customers_scale <- customers_subset %>% 
+  mutate_all(scale)
+```
+
+```{r}
+customer_clusters <- tibble(k = 1:20) %>% 
+  mutate(kclust = map(k, ~ kmeans(customers_scale, .x, nstart = 25)),
+         tidied = map(kclust, tidy),
+         glanced = map(kclust, glance),
+         augmented = map(kclust, augment, mall_customers))
+
+customer_clusters %>% unnest(c(tidied))
+```
+
+```{r}
+fviz_nbclust(customers_scale,
+             kmeans,
+             method = "silhouette",
+             nstart = 25)
+```
+
+```{r}
+fviz_nbclust(customers_scale,
+             kmeans,
+             method = "gap_stat",
+             nstart = 25) # No, don't like
+```
+
+5 clusters looks like a good fit
+
+```{r}
+customer_clusters %>% 
+  unnest(augmented) %>% 
+  filter(k == 5) %>% 
+  ggplot(aes(annual_income_k, spending_score_1_100, colour = .cluster, label = customer_id)) +
+  geom_point() +
+  geom_text(hjust = 0, vjust = -0.5, size = 3)
+```
+
+Clustering seems a good fit for the data. When I initially explored the data I thought 5 clusters would be suitable.
+
+Those with a middling income also seem to have a middling spending score (densly packed too).
+Those on a lower or higher annual income (>50<) seem to be split into 2 roughly equal groups. One with a low spending score and the other with a high spending score. 

@@ -98,7 +98,7 @@ rpart.plot(titanic_fit,
 ```
 
 ```{r}
-rpart.rules(titanic_fit, cover = TRUE)
+rpart.rules(titanic_fit, cover = TRUE, style = "tallw")
 ```
 
 ## 5. Interpretation 
