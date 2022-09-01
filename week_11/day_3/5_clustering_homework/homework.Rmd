@@ -63,6 +63,11 @@ fviz_nbclust(customers_scale,
 ```
 
 ```{r}
+fviz_nbclust(customers_scale, kmeans, method = "wss", nstart = 25)
+```
+
+
+```{r}
 fviz_nbclust(customers_scale,
              kmeans,
              method = "gap_stat",
