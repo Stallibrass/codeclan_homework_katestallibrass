@@ -1,0 +1,121 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Text Mining Homework
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(janeaustenr)
+```
+
+## 1.
+
+Find the most common words in both Pride & Prejudice and Sense & Sensibility.
+
+```{r}
+sense_book <- austen_books() %>% 
+  filter(book == "Sense & Sensibility") 
+
+sense_book %>% 
+  unnest_tokens(word, text) %>% 
+  count(word, sort = TRUE)
+```
+
+```{r}
+pride_book <- austen_books() %>% 
+  filter(book == "Pride & Prejudice") 
+
+pride_book %>% 
+  unnest_tokens(word, text) %>% 
+  count(word, sort = TRUE)
+```
+
+## 2.
+
+Find the most common words in both Pride & Prejudice and Sense & Sensibility, not including stop words.
+
+```{r}
+common_sense <- sense_book %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  count(word, sort = TRUE)
+
+common_sense
+```
+
+```{r}
+common_pride <- pride_book %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  count(word, sort = TRUE)
+
+common_pride
+```
+
+## 3.
+
+Find the most common sentiment words in both Pride & Prejudice and Sense & Sensibility.
+
+```{r}
+sense_sentiments <- common_sense %>% 
+  inner_join(get_sentiments("nrc")) %>% 
+  count(sentiment, sort = TRUE)
+
+sense_sentiments
+```
+
+```{r}
+pride_sentiments <- common_pride %>% 
+  inner_join(get_sentiments("nrc")) %>% 
+  count(sentiment, sort = TRUE)
+
+pride_sentiments
+```
+
+## Extension
+
+Taking your results above. Can you create a plot which visualises the differences between the books?
+
+```{r}
+sense_sentence <- tibble(
+  text = sensesensibility,
+  sentence = 1:length(sensesensibility)
+) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words)
+
+sense_sentence_sentiments <- sense_sentence %>%  
+  inner_join(get_sentiments("afinn")) %>% 
+  group_by(sentence) %>% 
+  summarise(mean_sentiment = mean(value)) %>% 
+  mutate(book = "Sense & Sensibility")
+```
+
+```{r}
+pride_sentence <- tibble(
+  text = prideprejudice,
+  sentence = 1:length(prideprejudice)
+) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words)
+
+pride_sentence_sentiments <- pride_sentence %>%  
+  inner_join(get_sentiments("afinn")) %>% 
+  group_by(sentence) %>% 
+  summarise(mean_sentiment = mean(value)) %>% 
+  mutate(book = "Pride & Prejudice")
+```
+
+```{r}
+sense_and_pride <- sense_sentence_sentiments %>% 
+  bind_rows(pride_sentence_sentiments) 
+
+ggplot(sense_and_pride) +
+  aes(x = sentence, y = mean_sentiment) +
+  geom_point(alpha = 0.1) +
+  geom_smooth() +
+  facet_wrap(~ book)
+```
