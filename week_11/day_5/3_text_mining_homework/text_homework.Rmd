@@ -113,6 +113,8 @@ pride_sentence_sentiments <- pride_sentence %>%
 sense_and_pride <- sense_sentence_sentiments %>% 
   bind_rows(pride_sentence_sentiments) 
 
+
+
 ggplot(sense_and_pride) +
   aes(x = sentence, y = mean_sentiment) +
   geom_point(alpha = 0.1) +
